@@ -2,7 +2,6 @@ package median
 
 import (
 	"container/heap"
-	"fmt"
 )
 
 // Median calculates and stores the running median of a stream
@@ -37,12 +36,12 @@ func (m *StreamingMedian) Add(i int) (median float64) {
 		// it doesn’t matter which, and returned as the first streaming median.
 		heap.Push(m.leftHeap, i)
 		m.Median = float64(i)
-		fmt.Println("size 0")
 	} else if m.Size == 1 {
 		// The second number in the input sequence is then added to the other heap,
 		// if the root of the right heap is less than the root of the left heap the
 		// two heaps are swapped, and the average of the two numbers is returned as
 		// the second streaming median.
+		m.Median = float64((*m.leftHeap)[0]+i) / float64(2.0)
 		if (*m.leftHeap)[0] > i {
 			n := m.leftHeap.Pop()
 			heap.Push(m.leftHeap, i)
@@ -50,10 +49,7 @@ func (m *StreamingMedian) Add(i int) (median float64) {
 		} else {
 			heap.Push(m.rightHeap, i)
 		}
-		m.Median = float64((*m.rightHeap)[0]+i) / float64(2.0)
-		fmt.Println("size 1")
 	} else {
-		fmt.Println("main")
 		// Now the main algorithm begins. Each subsequent number in the input sequence
 		// is compared to the current median, and added to the left heap if it is less
 		// than the current median or to the right heap if it is greater than the current
@@ -62,28 +58,26 @@ func (m *StreamingMedian) Add(i int) (median float64) {
 		// have the same count.
 		fi := float64(i)
 		if fi < m.Median {
-			m.leftHeap.Push(i)
+			heap.Push(m.leftHeap, i)
 		} else if fi == m.Median {
 			if len((*m.rightHeap)) <= len((*m.leftHeap)) {
-				m.rightHeap.Push(i)
+				heap.Push(m.rightHeap, i)
 			} else {
-				m.leftHeap.Push(i)
+				heap.Push(m.leftHeap, i)
 			}
 		} else {
-			m.rightHeap.Push(i)
+			heap.Push(m.rightHeap, i)
 		}
 
 		// If that causes the counts of the two heaps to differ by
 		// more than 1, the root of the larger heap is removed and inserted in the smaller
 		// heap.
 		if len((*m.rightHeap))-1 > len((*m.leftHeap)) {
-			fmt.Println("swop1")
-			n := m.rightHeap.Pop()
-			m.leftHeap.Push(n)
+			n := heap.Pop(m.rightHeap)
+			heap.Push(m.leftHeap, n)
 		} else if len((*m.rightHeap))+1 < len((*m.leftHeap)) {
-			fmt.Println("swop2")
-			n := m.leftHeap.Pop()
-			m.rightHeap.Push(n)
+			n := heap.Pop(m.leftHeap)
+			heap.Push(m.rightHeap, n)
 		}
 
 		// Then the current median is computed as the root of the larger heap, if they
@@ -98,10 +92,6 @@ func (m *StreamingMedian) Add(i int) (median float64) {
 		}
 	}
 	m.Size += 1
-	fmt.Println(*m.leftHeap, *m.rightHeap)
-	if m.Size >= 2 {
-		fmt.Println((*m.leftHeap)[0], (*m.rightHeap)[0])
-	}
 
 	return m.Median
 }

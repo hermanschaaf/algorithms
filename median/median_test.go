@@ -15,6 +15,9 @@ func TestStreamingMedian(t *testing.T) {
 		Case{2, 1.5},
 		Case{3, 2.0},
 		Case{4, 2.5},
+		Case{3, 3.0},
+		Case{2, 2.5},
+		Case{1, 2.0},
 	}
 
 	sm := StreamingMedian{}
