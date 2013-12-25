@@ -11,7 +11,7 @@ Streaming Median computes the running median of a list of values as they are add
 ```
 import (
     "fmt"
-    "github.com/hermanschaaf/median"
+    "github.com/hermanschaaf/algorithms/median"
 )
 
 func main(){
@@ -22,4 +22,14 @@ func main(){
        fmt.Printf("Added %v, new median is %v\n", lst[i], m)
    }
 }
+```
+
+And the output is:
+
+```
+Added 1, new median is 1
+Added 2, new median is 1.5
+Added 3, new median is 2
+Added 4, new median is 2.5
+Added 5, new median is 3
 ```
